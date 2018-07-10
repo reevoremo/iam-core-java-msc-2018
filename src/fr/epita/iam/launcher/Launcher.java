@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.List;
 
 import fr.epita.iam.datamodel.Identity;
+import fr.epita.iam.services.identity.IdentityDAO;
 
 /**
  * <h3>Description</h3>
