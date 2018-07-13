@@ -76,16 +76,16 @@ public class Launcher {
 		final ConsoleOperations console = new ConsoleOperations();
 		// Welcome
 		// Authentication
-		//String username = console.readUsernameFromConsole();
-		//String password = console.readPasswordFromConsole();
+		String username = console.readUsernameFromConsole();
+		String password = console.readPasswordFromConsole();
 		
-		boolean loggedIn = true;
-		/*if (username.equals("root") && password.equals("pass")) {
+		boolean loggedIn = false;
+		if (username.equals("root") && password.equals("pass")) {
 			loggedIn = true;
 		}
 		else {
 			System.out.println("Invalid login credentials");
-		}*/
+		}
 		// Menu
 		while (loggedIn) {
 			String selection = console.menuSelectionFromConsole();
