@@ -45,7 +45,7 @@ public class ConfigurationService {
 	private static void init() {
 		try {
 			properties = new Properties();
-			properties.load(new FileInputStream("/Users/reevoremo/git/iam-core-java-msc-2018/src/test.properties"));
+			properties.load(new FileInputStream("test.properties"));
 		} catch (final Exception e) {
 			// TODO treat exception
 			System.out.println("File read error " + e.toString());

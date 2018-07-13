@@ -15,8 +15,11 @@ import java.util.List;
 
 import fr.epita.iam.datamodel.Identity;
 import fr.epita.iam.exceptions.EntityCreationException;
+import fr.epita.iam.exceptions.EntityDeletionException;
+import fr.epita.iam.exceptions.EntityUpdateException;
 import fr.epita.iam.services.conf.ConfKey;
 import fr.epita.iam.services.conf.ConfigurationService;
+import fr.epita.iam.ui.ConsoleOperations;
 
 /**
  * <h3>Description</h3>
@@ -58,9 +61,7 @@ public class IdentityJDBCDAO implements IdentityDAO {
 		Connection connection = null;
 		try {
 			connection = getConnection();
-			final PreparedStatement pstmt = connection
-					.prepareStatement(ConfigurationService.getProperty(ConfKey.IDENTITY_INSERT_QUERY));
-
+			final PreparedStatement pstmt = connection.prepareStatement("INSERT INTO IDENTITIES (IDENTITY_DISPLAYNAME, IDENTITY_EMAIL, IDENTITY_UID) VALUES (?, ?, ?)");
 			pstmt.setString(1, identity.getDisplayName());
 			pstmt.setString(2, identity.getEmail());
 			pstmt.setString(3, identity.getUid());
@@ -72,22 +73,77 @@ public class IdentityJDBCDAO implements IdentityDAO {
 				try {
 					connection.close();
 				} catch (final SQLException e1) {
-					
+					System.out.println(e1.getMessage());
 				}
 			}
-			final EntityCreationException exception = new EntityCreationException(identity, e);
-			throw exception;
+			throw new EntityCreationException(identity, e);
 		}
 	}
 
 	@Override
-	public void delete(Identity identity) {
-
+	public void delete(Identity identity) throws EntityDeletionException{
+		Connection connection = null;
+		try {
+			connection = getConnection();
+			final PreparedStatement pstmt = connection
+					.prepareStatement("DELETE FROM identities WHERE identity_displayname = ? AND identity_email = ?");
+			pstmt.setString(1, identity.getDisplayName());
+			pstmt.setString(2, identity.getEmail());
+			if (pstmt.executeUpdate() > 0) {
+				System.out.println("Record deleted Successfully");
+			}
+			else {
+				System.out.println("Record not found");
+			}
+			pstmt.close();
+			connection.close();
+		} catch (final SQLException e) {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (final SQLException e1) {
+					System.out.println(e1.getMessage());
+				}
+			}
+			throw new EntityDeletionException(identity, e);
+		}
 	}
 
 	@Override
-	public void update(Identity identity) {
-
+	public void update(Identity identity) throws EntityUpdateException{
+		Connection connection = null;
+		System.out.println("Please enter the things to change");
+		final ConsoleOperations console = new ConsoleOperations();
+		Identity updateId = console.readIdentityFromConsole();
+		console.releaseResources();
+		try {
+			connection = getConnection();
+			final PreparedStatement pstmt = connection
+					.prepareStatement("UPDATE identities SET IDENTITY_DISPLAYNAME = ?, IDENTITY_EMAIL = ?, IDENTITY_UID = ?  WHERE IDENTITY_DISPLAYNAME = ?, IDENTITY_EMAIL = ?, IDENTITY_UID = ?");
+			pstmt.setString(1, updateId.getDisplayName());
+			pstmt.setString(2, updateId.getEmail());
+			pstmt.setString(3, updateId.getUid());
+			pstmt.setString(4, identity.getDisplayName());
+			pstmt.setString(5, identity.getEmail());
+			pstmt.setString(6, identity.getUid());
+			if (pstmt.executeUpdate() > 0) {
+				System.out.println("Record Updated Successfully");
+			}
+			else {
+				System.out.println("Record not found");
+			}
+			pstmt.close();
+			connection.close();
+		} catch (final SQLException e) {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (final SQLException e1) {
+					System.out.println(e1.getMessage());
+				}
+			}
+			throw new EntityUpdateException(identity, e);
+		}
 	}
 
 	@Override
@@ -126,7 +182,7 @@ public class IdentityJDBCDAO implements IdentityDAO {
 				try {
 					connection.close();
 				} catch (final SQLException e2) {
-					// TODO handle
+					System.out.println("Failed to close the connection" + e2.getMessage());
 				}
 			}
 		}
