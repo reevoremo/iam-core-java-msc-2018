@@ -22,13 +22,14 @@ package fr.epita.iam.exceptions;
 public class EntityCreationException extends Exception {
 
 
-	Object entity;
+	private Object entity;
 
 	/**
 	 *
 	 */
 	public EntityCreationException(Object entity, Throwable cause) {
 		this.entity = entity;
+		System.out.println(cause.getMessage());
 		initCause(cause);
 	}
 

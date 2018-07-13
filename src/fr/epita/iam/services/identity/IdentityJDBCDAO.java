@@ -1,5 +1,6 @@
 /**
- * Ce fichier est la propriété de Thomas BROUSSARD Code application : Composant :
+ * Thomas BROUSSARD
+ * Behan Remoshan
  */
 package fr.epita.iam.services.identity;
 
@@ -39,7 +40,6 @@ import fr.epita.iam.services.conf.ConfigurationService;
  *         ${tags}
  */
 public class IdentityJDBCDAO implements IdentityDAO {
-
 	private static Connection getConnection() throws SQLException {
 		// Given this context
 		final String url = ConfigurationService.getProperty(ConfKey.DB_URL);
@@ -72,7 +72,7 @@ public class IdentityJDBCDAO implements IdentityDAO {
 				try {
 					connection.close();
 				} catch (final SQLException e1) {
-
+					
 				}
 			}
 			final EntityCreationException exception = new EntityCreationException(identity, e);

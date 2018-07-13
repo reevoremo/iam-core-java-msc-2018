@@ -9,7 +9,11 @@ import java.io.IOException;
 import java.util.List;
 
 import fr.epita.iam.datamodel.Identity;
+import fr.epita.iam.exceptions.EntityCreationException;
+import fr.epita.iam.exceptions.EntitySearchException;
 import fr.epita.iam.services.identity.IdentityDAO;
+import fr.epita.iam.services.identity.IdentityJDBCDAO;
+import fr.epita.iam.ui.ConsoleOperations;
 
 /**
  * <h3>Description</h3>
@@ -65,31 +69,53 @@ public class Launcher {
 	 */
 	public static void main(String[] args) throws IOException {
 		// initialize resources
-		IdentityDAO dao = null;
-		try {
-			dao = IdentityDAOFactory.getDAO();
-		} catch (final Exception e) {
-			// TODO log
-
-			return;
-		}
+		IdentityDAO dao = new IdentityJDBCDAO();
 		
 		final ConsoleOperations console = new ConsoleOperations();
 		// Welcome
 		// Authentication
-
+		String username = console.readUsernameFromConsole();
+		String password = console.readPasswordFromConsole();
+		
+		boolean loggedIn = false;
+		if (username.equals("root") && password.equals("pass")) {
+			loggedIn = true;
+		}
+		else {
+			System.out.println("Invalid login credentials");
+		}
 		// Menu
-
+		while (loggedIn) {
+			String selection = console.menuSelectionFromConsole();
+			switch (selection) {
+			case "1":
+				break;
+			case "2":
+				break;
+			case "3":
+				break;
+			case "4":
+				break;
+			case "5":
+				break;
+			case "6":
+				loggedIn = false;
+				break;
+			default:
+				System.out.println("Invalid Selection");
+			}
+		}
 		// Create
 		final Identity identity = console.readIdentityFromConsole();
 		try {
 			dao.create(identity);
 		} catch (final EntityCreationException ece) {
-			System.out.println(ece.getMessage());
+			System.out.println("Failed");
+			System.out.println(ece.getUserMessage());
 		}
 		// Search?
 		final Identity criteria = console.readCriteriaFromConsole();
-		List<Identity> resultList;
+		List<Identity> resultList;//iloveyou
 		try {
 			resultList = dao.search(criteria);
 			console.displayIdentitiesInConsole(resultList);
