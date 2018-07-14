@@ -78,15 +78,20 @@ public class ConsoleOperations {
 		String line = scanner.nextLine();
 		return line;
 	}
-	
+	public String readIDFromConsole() {
+		System.out.println("Enter the ID");
+		String line = scanner.nextLine();
+		return line;
+	}
 	public String menuSelectionFromConsole() {
 		System.out.println("Choose the operation");
 		System.out.println("1 - Create Identity");
 		System.out.println("2 - Update Identity");
 		System.out.println("3 - Search Identity");
 		System.out.println("4 - Search Identity by ID");
-		System.out.println("5 - Delete Identity");
-		System.out.println("6 - Exit");
+		System.out.println("5 - Display All");
+		System.out.println("6 - Delete Identity");
+		System.out.println("7 - Exit");
 		String line = scanner.nextLine();
 		return line;
 	}

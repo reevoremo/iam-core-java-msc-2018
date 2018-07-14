@@ -47,7 +47,6 @@ public class ConfigurationService {
 			properties = new Properties();
 			properties.load(new FileInputStream("test.properties"));
 		} catch (final Exception e) {
-			// TODO treat exception
 			System.out.println("File read error " + e.toString());
 		}
 

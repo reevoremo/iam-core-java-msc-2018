@@ -6,11 +6,13 @@ package fr.epita.iam.launcher;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import fr.epita.iam.datamodel.Identity;
 import fr.epita.iam.exceptions.EntityCreationException;
 import fr.epita.iam.exceptions.EntityDeletionException;
+import fr.epita.iam.exceptions.EntityReadException;
 import fr.epita.iam.exceptions.EntitySearchException;
 import fr.epita.iam.exceptions.EntityUpdateException;
 import fr.epita.iam.services.identity.IdentityDAO;
@@ -67,6 +69,7 @@ public class Launcher {
 	 *
 	 *         ${tags}
 	 * @throws IOException
+	 * @throws EntityReadException 
 	 * @throws FileNotFoundException
 	 */
 	public static void main(String[] args) throws IOException {
@@ -119,8 +122,19 @@ public class Launcher {
 				}
 				break;
 			case "4":
+				final String id = console.readIDFromConsole();
+				List<Identity> resultListID = new ArrayList<>();
+				try {
+					final Identity identityByID = dao.getById(id);
+					resultListID.add(identityByID);
+					console.displayIdentitiesInConsole(resultListID);
+				} catch (final EntityReadException e) {
+					System.out.println(e.getMessage());
+				}
 				break;
 			case "5":
+				break;
+			case "6":
 				final Identity deleteIdentity = console.readIdentityFromConsole();
 				try {
 					dao.delete(deleteIdentity);
@@ -129,7 +143,7 @@ public class Launcher {
 					System.out.println(ece.getUserMessage());
 				}
 				break;
-			case "6":
+			case "7":
 				loggedIn = false;
 				break;
 			default:

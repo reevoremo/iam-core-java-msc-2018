@@ -16,6 +16,8 @@ import java.util.List;
 import fr.epita.iam.datamodel.Identity;
 import fr.epita.iam.exceptions.EntityCreationException;
 import fr.epita.iam.exceptions.EntityDeletionException;
+import fr.epita.iam.exceptions.EntityReadException;
+import fr.epita.iam.exceptions.EntitySearchException;
 import fr.epita.iam.exceptions.EntityUpdateException;
 import fr.epita.iam.services.conf.ConfKey;
 import fr.epita.iam.services.conf.ConfigurationService;
@@ -65,7 +67,11 @@ public class IdentityJDBCDAO implements IdentityDAO {
 			pstmt.setString(1, identity.getDisplayName());
 			pstmt.setString(2, identity.getEmail());
 			pstmt.setString(3, identity.getUid());
-			pstmt.execute();
+			if(pstmt.executeUpdate() > 0) {
+				System.out.println("Identity created");
+			} else {
+				System.out.println("Identity not created");
+			}
 			pstmt.close();
 			connection.close();
 		} catch (final SQLException e) {
@@ -115,7 +121,6 @@ public class IdentityJDBCDAO implements IdentityDAO {
 		System.out.println("Please enter the things to change");
 		final ConsoleOperations console = new ConsoleOperations();
 		Identity updateId = console.readIdentityFromConsole();
-		console.releaseResources();
 		try {
 			connection = getConnection();
 			final PreparedStatement pstmt = connection
@@ -147,14 +152,43 @@ public class IdentityJDBCDAO implements IdentityDAO {
 	}
 
 	@Override
-	public Identity getById(Serializable id) {
-		final Identity identity = new Identity();
-
+	public Identity getById(Serializable id) throws EntityReadException {
+		Identity identity = null;
+		
+		Connection connection = null;
+		try {
+			connection = getConnection();
+			final PreparedStatement pstmt = connection
+					.prepareStatement("select IDENTITY_DISPLAYNAME, IDENTITY_EMAIL, IDENTITY_UID from IDENTITIES"
+							+ " where IDENTITY_ID = ?");
+			pstmt.setString(1, id.toString());
+			final ResultSet rs = pstmt.executeQuery();
+			if(rs.next()) {
+				final String displayName = rs.getString("IDENTITY_DISPLAYNAME");
+				final String email = rs.getString("IDENTITY_EMAIL");
+				final String uid = rs.getString("IDENTITY_UID");
+				identity = new Identity(displayName, uid, email);
+				System.out.println("Found!");
+			} else {
+				System.out.println("Identity not found");
+			}
+			pstmt.close();
+			connection.close();
+		} catch (final SQLException e) {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (final SQLException e2) {
+					System.out.println("Failed to close the connection" + e2.getMessage());
+				}
+			}
+			throw new EntityReadException(e);
+		}
 		return identity;
 	}
 
 	@Override
-	public List<Identity> search(Identity criteria) {
+	public List<Identity> search(Identity criteria) throws EntitySearchException {
 		final List<Identity> list = new ArrayList<>();
 
 		Connection connection = null;
@@ -185,6 +219,7 @@ public class IdentityJDBCDAO implements IdentityDAO {
 					System.out.println("Failed to close the connection" + e2.getMessage());
 				}
 			}
+			throw new EntitySearchException(e);
 		}
 		return list;
 	}
