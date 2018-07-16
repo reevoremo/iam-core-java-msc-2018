@@ -4,9 +4,10 @@
  */
 package fr.epita.iam.services.conf;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.util.Properties;
+
+import fr.epita.iam.services.identity.ConsoleLogger;
 
 /**
  * <h3>Description</h3>
@@ -47,7 +48,7 @@ public class ConfigurationService {
 			properties = new Properties();
 			properties.load(new FileInputStream("test.properties"));
 		} catch (final Exception e) {
-			System.out.println("File read error " + e.toString());
+			ConsoleLogger.log("File read error " + e.toString());
 		}
 
 

@@ -15,6 +15,8 @@ import fr.epita.iam.exceptions.EntityDeletionException;
 import fr.epita.iam.exceptions.EntityReadException;
 import fr.epita.iam.exceptions.EntitySearchException;
 import fr.epita.iam.exceptions.EntityUpdateException;
+import fr.epita.iam.services.Session;
+import fr.epita.iam.services.identity.ConsoleLogger;
 import fr.epita.iam.services.identity.IdentityDAO;
 import fr.epita.iam.services.identity.IdentityJDBCDAO;
 import fr.epita.iam.ui.ConsoleOperations;
@@ -77,17 +79,20 @@ public class Launcher {
 		IdentityDAO dao = new IdentityJDBCDAO();
 		
 		final ConsoleOperations console = new ConsoleOperations();
+		
 		// Welcome
 		// Authentication
 		String username = console.readUsernameFromConsole();
 		String password = console.readPasswordFromConsole();
 		
+		Session session = new Session();
+		
 		boolean loggedIn = false;
-		if (username.equals("root") && password.equals("pass")) {
+		if (session.login(username, password)) {
 			loggedIn = true;
 		}
 		else {
-			System.out.println("Invalid login credentials");
+			ConsoleLogger.log("Invalid login credentials");
 		}
 		// Menu
 		while (loggedIn) {
@@ -98,8 +103,8 @@ public class Launcher {
 				try {
 					dao.create(identity);
 				} catch (final EntityCreationException ece) {
-					System.out.println("Failed");
-					System.out.println(ece.getUserMessage());
+					ConsoleLogger.log("Failed");
+					ConsoleLogger.log(ece.getUserMessage());
 				}
 				break;
 			case "2":
@@ -107,8 +112,8 @@ public class Launcher {
 				try {
 					dao.update(updateIdentity);
 				} catch (final EntityUpdateException ece) {
-					System.out.println("Failed");
-					System.out.println(ece.getUserMessage());
+					ConsoleLogger.log("Failed");
+					ConsoleLogger.log(ece.getUserMessage());
 				}
 				break;
 			case "3":
@@ -118,7 +123,7 @@ public class Launcher {
 					resultList = dao.search(criteria);
 					console.displayIdentitiesInConsole(resultList);
 				} catch (final EntitySearchException e) {
-					System.out.println(e.getMessage());
+					ConsoleLogger.log(e.getMessage());
 				}
 				break;
 			case "4":
@@ -129,27 +134,35 @@ public class Launcher {
 					resultListID.add(identityByID);
 					console.displayIdentitiesInConsole(resultListID);
 				} catch (final EntityReadException e) {
-					System.out.println(e.getMessage());
+					ConsoleLogger.log(e.getMessage());
 				}
 				break;
 			case "5":
+				List<Identity> resultListAll = new ArrayList<>();
+				try {
+					resultListAll = dao.getAll();
+					console.displayIdentitiesInConsole(resultListAll);
+				} catch (final EntityReadException e) {
+					ConsoleLogger.log(e.getMessage());
+				}
 				break;
 			case "6":
 				final Identity deleteIdentity = console.readIdentityFromConsole();
 				try {
 					dao.delete(deleteIdentity);
 				} catch (final EntityDeletionException ece) {
-					System.out.println("Failed");
-					System.out.println(ece.getUserMessage());
+					ConsoleLogger.log("Failed");
+					ConsoleLogger.log(ece.getUserMessage());
 				}
 				break;
 			case "7":
 				loggedIn = false;
 				break;
 			default:
-				System.out.println("Invalid Selection");
+				ConsoleLogger.log("Invalid Selection");
 			}
 		}
+		ConsoleLogger.log("Disconnected");
 		console.releaseResources();
 
 	}

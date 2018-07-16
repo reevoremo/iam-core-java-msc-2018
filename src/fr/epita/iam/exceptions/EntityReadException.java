@@ -10,7 +10,7 @@ package fr.epita.iam.exceptions;
  *
  * <h3>Usage</h3>
  * <p>This class should be used as follows:
- *   <pre><code>${type_name} instance = new ${type_name}();</code></pre>
+ *   <pre><code>${EntityReadException} instance = new ${type_name}();</code></pre>
  * </p>
  *
  * @since $${version}
@@ -29,7 +29,6 @@ public class EntityReadException extends Exception {
 	 */
 	public EntityReadException(Throwable cause) {
 		this.entity = entity;
-		System.out.println(cause.getMessage());
 		initCause(cause);
 	}
 

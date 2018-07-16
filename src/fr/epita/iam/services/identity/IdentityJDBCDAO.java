@@ -26,7 +26,7 @@ import fr.epita.iam.ui.ConsoleOperations;
 /**
  * <h3>Description</h3>
  * <p>
- * This class allows to ...
+ * This class allows you to retrieve data from the the database. It provides the functions create, update, delete, search, search by ID and display all records.
  * </p>
  *
  * <h3>Usage</h3>
@@ -52,10 +52,8 @@ public class IdentityJDBCDAO implements IdentityDAO {
 
 		// When I connect
 		connection = DriverManager.getConnection(url, ConfigurationService.getProperty(ConfKey.DB_USER),
-
 				ConfigurationService.getProperty(ConfKey.DB_PASSWORD));
 		return connection;
-
 	}
 
 	@Override
@@ -68,9 +66,9 @@ public class IdentityJDBCDAO implements IdentityDAO {
 			pstmt.setString(2, identity.getEmail());
 			pstmt.setString(3, identity.getUid());
 			if(pstmt.executeUpdate() > 0) {
-				System.out.println("Identity created");
+				ConsoleLogger.log("Identity created");
 			} else {
-				System.out.println("Identity not created");
+				ConsoleLogger.log("Identity not created");
 			}
 			pstmt.close();
 			connection.close();
@@ -79,7 +77,7 @@ public class IdentityJDBCDAO implements IdentityDAO {
 				try {
 					connection.close();
 				} catch (final SQLException e1) {
-					System.out.println(e1.getMessage());
+					ConsoleLogger.log(e1.getMessage());
 				}
 			}
 			throw new EntityCreationException(identity, e);
@@ -96,10 +94,10 @@ public class IdentityJDBCDAO implements IdentityDAO {
 			pstmt.setString(1, identity.getDisplayName());
 			pstmt.setString(2, identity.getEmail());
 			if (pstmt.executeUpdate() > 0) {
-				System.out.println("Record deleted Successfully");
+				ConsoleLogger.log("Record deleted Successfully");
 			}
 			else {
-				System.out.println("Record not found");
+				ConsoleLogger.log("Record not found");
 			}
 			pstmt.close();
 			connection.close();
@@ -108,7 +106,7 @@ public class IdentityJDBCDAO implements IdentityDAO {
 				try {
 					connection.close();
 				} catch (final SQLException e1) {
-					System.out.println(e1.getMessage());
+					ConsoleLogger.log(e1.getMessage());
 				}
 			}
 			throw new EntityDeletionException(identity, e);
@@ -118,7 +116,7 @@ public class IdentityJDBCDAO implements IdentityDAO {
 	@Override
 	public void update(Identity identity) throws EntityUpdateException{
 		Connection connection = null;
-		System.out.println("Please enter the things to change");
+		ConsoleLogger.log("Please enter the things to change");
 		final ConsoleOperations console = new ConsoleOperations();
 		Identity updateId = console.readIdentityFromConsole();
 		try {
@@ -132,10 +130,10 @@ public class IdentityJDBCDAO implements IdentityDAO {
 			pstmt.setString(5, identity.getEmail());
 			pstmt.setString(6, identity.getUid());
 			if (pstmt.executeUpdate() > 0) {
-				System.out.println("Record Updated Successfully");
+				ConsoleLogger.log("Record Updated Successfully");
 			}
 			else {
-				System.out.println("Record not found");
+				ConsoleLogger.log("Record not found");
 			}
 			pstmt.close();
 			connection.close();
@@ -144,7 +142,7 @@ public class IdentityJDBCDAO implements IdentityDAO {
 				try {
 					connection.close();
 				} catch (final SQLException e1) {
-					System.out.println(e1.getMessage());
+					ConsoleLogger.log(e1.getMessage());
 				}
 			}
 			throw new EntityUpdateException(identity, e);
@@ -168,9 +166,9 @@ public class IdentityJDBCDAO implements IdentityDAO {
 				final String email = rs.getString("IDENTITY_EMAIL");
 				final String uid = rs.getString("IDENTITY_UID");
 				identity = new Identity(displayName, uid, email);
-				System.out.println("Found!");
+				ConsoleLogger.log("Found!");
 			} else {
-				System.out.println("Identity not found");
+				ConsoleLogger.log("Identity not found");
 			}
 			pstmt.close();
 			connection.close();
@@ -179,7 +177,7 @@ public class IdentityJDBCDAO implements IdentityDAO {
 				try {
 					connection.close();
 				} catch (final SQLException e2) {
-					System.out.println("Failed to close the connection" + e2.getMessage());
+					ConsoleLogger.log("Failed to close the connection" + e2.getMessage());
 				}
 			}
 			throw new EntityReadException(e);
@@ -216,10 +214,41 @@ public class IdentityJDBCDAO implements IdentityDAO {
 				try {
 					connection.close();
 				} catch (final SQLException e2) {
-					System.out.println("Failed to close the connection" + e2.getMessage());
+					ConsoleLogger.log("Failed to close the connection" + e2.getMessage());
 				}
 			}
 			throw new EntitySearchException(e);
+		}
+		return list;
+	}
+	
+	@Override
+	public List<Identity> getAll() throws EntityReadException{
+		final List<Identity> list = new ArrayList<>();
+		Connection connection = null;
+		try {
+			connection = getConnection();
+			final PreparedStatement pstmt = connection
+					.prepareStatement("select IDENTITY_DISPLAYNAME, IDENTITY_EMAIL, IDENTITY_UID from IDENTITIES");
+			final ResultSet rs = pstmt.executeQuery();
+			while (rs.next()) {
+				final String displayName = rs.getString("IDENTITY_DISPLAYNAME");
+				final String email = rs.getString("IDENTITY_EMAIL");
+				final String uid = rs.getString("IDENTITY_UID");
+				final Identity identity = new Identity(displayName, uid, email);
+				list.add(identity);
+			}
+			pstmt.close();
+			connection.close();
+		} catch (final SQLException e) {
+			if (connection != null) {
+				try {
+					connection.close();
+				} catch (final SQLException e2) {
+					ConsoleLogger.log("Failed to close the connection" + e2.getMessage());
+				}
+			}
+			throw new EntityReadException(e);
 		}
 		return list;
 	}
@@ -236,7 +265,6 @@ public class IdentityJDBCDAO implements IdentityDAO {
 			return true;
 		} catch (final SQLException sqle) {
 			// TODO log
-
 		}
 		return false;
 

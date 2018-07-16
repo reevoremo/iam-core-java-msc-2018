@@ -8,7 +8,6 @@ public class EntityUpdateException extends Exception{
 	 */
 	public EntityUpdateException(Object entity, Throwable cause) {
 		this.entity = entity;
-		System.out.println(cause.getMessage());
 		initCause(cause);
 	}
 

@@ -4,7 +4,10 @@
  */
 package fr.epita.iam.services.identity;
 
+import java.util.List;
+
 import fr.epita.iam.datamodel.Identity;
+import fr.epita.iam.exceptions.EntityReadException;
 import fr.epita.iam.services.DAO;
 
 /**
@@ -51,5 +54,7 @@ public interface IdentityDAO extends DAO<Identity> {
 	 *         ${tags}
 	 */
 	boolean healthCheck();
+
+	List<Identity> getAll() throws EntityReadException;
 
 }

@@ -29,7 +29,6 @@ public class EntityCreationException extends Exception {
 	 */
 	public EntityCreationException(Object entity, Throwable cause) {
 		this.entity = entity;
-		System.out.println(cause.getMessage());
 		initCause(cause);
 	}
 

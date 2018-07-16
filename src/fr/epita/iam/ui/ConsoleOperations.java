@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Scanner;
 
 import fr.epita.iam.datamodel.Identity;
+import fr.epita.iam.services.identity.ConsoleLogger;
 
 /**
  * <h3>Description</h3>
@@ -34,25 +35,25 @@ public class ConsoleOperations {
 
 	public Identity readIdentityFromConsole() {
 		final Identity identity = new Identity();
-		System.out.println("please input the display name : ");
+		ConsoleLogger.log("please input the display name : ");
 		String line = scanner.nextLine();
 		identity.setDisplayName(line);
-		System.out.println("please input the email");
+		ConsoleLogger.log("please input the email");
 		line = scanner.nextLine();
 		identity.setEmail(line);
-		System.out.println("please input uid");
+		ConsoleLogger.log("please input uid");
 		line = scanner.nextLine();
 		identity.setUid(line);
 		return identity;
 	}
 
 	public Identity readCriteriaFromConsole() {
-		System.out.println("Enter criteria");
+		ConsoleLogger.log("Enter criteria");
 		final Identity identity = new Identity();
-		System.out.println("please input the criterion for display name : ");
+		ConsoleLogger.log("please input the criterion for display name : ");
 		String line = scanner.nextLine();
 		identity.setDisplayName(line);
-		System.out.println("please input the criterion for email");
+		ConsoleLogger.log("please input the criterion for email");
 		line = scanner.nextLine();
 		identity.setEmail(line);
 
@@ -63,37 +64,33 @@ public class ConsoleOperations {
 		int i = 1;
 		for (final Identity identity : identities) {
 			System.out.print(i++);
-			System.out.println(" - " + identity);
+			ConsoleLogger.log(" - " + identity);
 		}
 	}
 	
 	public String readUsernameFromConsole() {
-		System.out.println("Enter username");
-		String line = scanner.nextLine();
-		return line;
+		ConsoleLogger.log("Enter username");
+		return scanner.nextLine();
 	}
 	
 	public String readPasswordFromConsole() {
-		System.out.println("Enter password");
-		String line = scanner.nextLine();
-		return line;
+		ConsoleLogger.log("Enter password");
+		return scanner.nextLine();
 	}
 	public String readIDFromConsole() {
-		System.out.println("Enter the ID");
-		String line = scanner.nextLine();
-		return line;
+		ConsoleLogger.log("Enter the ID");
+		return scanner.nextLine();
 	}
 	public String menuSelectionFromConsole() {
-		System.out.println("Choose the operation");
-		System.out.println("1 - Create Identity");
-		System.out.println("2 - Update Identity");
-		System.out.println("3 - Search Identity");
-		System.out.println("4 - Search Identity by ID");
-		System.out.println("5 - Display All");
-		System.out.println("6 - Delete Identity");
-		System.out.println("7 - Exit");
-		String line = scanner.nextLine();
-		return line;
+		ConsoleLogger.log("Choose the operation");
+		ConsoleLogger.log("1 - Create Identity");
+		ConsoleLogger.log("2 - Update Identity");
+		ConsoleLogger.log("3 - Search Identity");
+		ConsoleLogger.log("4 - Search Identity by ID");
+		ConsoleLogger.log("5 - Display All");
+		ConsoleLogger.log("6 - Delete Identity");
+		ConsoleLogger.log("7 - Exit");
+		return scanner.nextLine();
 	}
 	
 	public void releaseResources() {
