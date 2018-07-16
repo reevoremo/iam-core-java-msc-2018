@@ -121,14 +121,13 @@ public class IdentityJDBCDAO implements IdentityDAO {
 		Identity updateId = console.readIdentityFromConsole();
 		try {
 			connection = getConnection();
-			final PreparedStatement pstmt = connection
-					.prepareStatement("UPDATE identities SET IDENTITY_DISPLAYNAME = ?, IDENTITY_EMAIL = ?, IDENTITY_UID = ?  WHERE IDENTITY_DISPLAYNAME = ?, IDENTITY_EMAIL = ?, IDENTITY_UID = ?");
+			final String sql = "UPDATE identities SET IDENTITY_DISPLAYNAME = ?, IDENTITY_EMAIL = ?, IDENTITY_UID = ?  WHERE IDENTITY_DISPLAYNAME = ? AND IDENTITY_EMAIL = ?";
+			final PreparedStatement pstmt = connection.prepareStatement(sql);
 			pstmt.setString(1, updateId.getDisplayName());
 			pstmt.setString(2, updateId.getEmail());
 			pstmt.setString(3, updateId.getUid());
 			pstmt.setString(4, identity.getDisplayName());
 			pstmt.setString(5, identity.getEmail());
-			pstmt.setString(6, identity.getUid());
 			if (pstmt.executeUpdate() > 0) {
 				ConsoleLogger.log("Record Updated Successfully");
 			}

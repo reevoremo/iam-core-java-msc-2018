@@ -74,7 +74,7 @@ public class Launcher {
 	 * @throws EntityReadException 
 	 * @throws FileNotFoundException
 	 */
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) {
 		// initialize resources
 		IdentityDAO dao = new IdentityJDBCDAO();
 		
@@ -103,7 +103,6 @@ public class Launcher {
 				try {
 					dao.create(identity);
 				} catch (final EntityCreationException ece) {
-					ConsoleLogger.log("Failed");
 					ConsoleLogger.log(ece.getUserMessage());
 				}
 				break;
@@ -112,7 +111,6 @@ public class Launcher {
 				try {
 					dao.update(updateIdentity);
 				} catch (final EntityUpdateException ece) {
-					ConsoleLogger.log("Failed");
 					ConsoleLogger.log(ece.getUserMessage());
 				}
 				break;
@@ -151,7 +149,6 @@ public class Launcher {
 				try {
 					dao.delete(deleteIdentity);
 				} catch (final EntityDeletionException ece) {
-					ConsoleLogger.log("Failed");
 					ConsoleLogger.log(ece.getUserMessage());
 				}
 				break;
